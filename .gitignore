@@ -40,7 +40,6 @@ basic/frontend/.cache/
 basic/frontend/.spago/
 basic/out/
 basic/.idea/
-basic/app/
 basic/frontend/node_modules/
 basic/haskell-purescript-hello-world.cabal
 basic/haskell-purescript-hello-world.iml
