@@ -43,3 +43,10 @@ stack run haskell-purescript-hello-world-server
 (I prefer the first style because it allows me to iterate on my code faster)
 
 4. Open http://localhost:8081
+
+### More examples to come
+
+* Database access
+* Servant auth example
+* Logging
+* Error Handling
