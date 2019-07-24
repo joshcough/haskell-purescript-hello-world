@@ -1,0 +1,23 @@
+{
+    "scripts": {
+        "postinstall": "spago install",
+        "build": "spago build && parcel build app.js"
+    },
+    "devDependencies": {
+        "concurrently": "^4.1.0",
+        "parcel": "^1.12.3",
+        "parcel-bundler": "^1.12.3",
+        "purescript": "0.13.0",
+        "purescript-psa": "0.7.3",
+        "react-bootstrap": "^1.0.0-beta.8",
+        "request": "^2.88.0",
+        "spago": "^0.8.0"
+    },
+    "dependencies": {
+        "JSX": "^1.1.0",
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6",
+        "styled-bootstrap-grid": "^3.0.4",
+        "styled-components": "^4.3.2"
+    }
+}
