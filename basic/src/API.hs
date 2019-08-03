@@ -14,13 +14,13 @@ type HelloWorldAPI = "api" :> Compose Api
 
 newtype Api route =
   Api
-    { hello :: route :- "hello" :> Get '[JSON] Message
+    { hello :: route :- "hello" :> Capture "count" Int :> Get '[JSON] Message
     }
   deriving (Generic)
 
 helloWorldServer :: (MonadIO m) => ServerT HelloWorldAPI (AppT m)
 helloWorldServer = toServant $ Api {..}
   where
-    hello = do
-      is <- liftIO $ replicateM 5 (randomRIO (0, 100))
-      pure $ Message "Hello, World" 42 is
+    hello i = do
+      is <- liftIO $ replicateM i (randomRIO (0, 100))
+      pure $ Message "Hello, World" i is

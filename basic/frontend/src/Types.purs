@@ -3,19 +3,12 @@ module Types
     ) where
 
 import Prelude
-import Models as Models
-import Control.Monad.Error.Class (class MonadError, throwError)
+import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except.Trans (ExceptT, runExceptT)
 import Control.Monad.Reader.Trans (ReaderT, runReaderT)
-import Data.Array (length)
 import Data.Either (either)
-import Data.Maybe (Maybe(..), maybe)
-import Effect (Effect)
-import Effect.Aff.Class (class MonadAff)
 import Effect.Aff (Aff, error)
-import Elmish.HTML as R
-import Elmish (ReactElement, boot, ComponentDef, nat, DispatchMsgFn, JsCallback0, ReactComponent, Transition(..), createElement', handle, pureUpdate)
-import Network.HTTP (HttpException, Method(..), buildReq, httpJSON, noData)
+import Network.HTTP (HttpException)
 
 type OpM' c = ReaderT c (ExceptT HttpException Aff)
 type OpM = OpM' Unit
