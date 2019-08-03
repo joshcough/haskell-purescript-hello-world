@@ -39,10 +39,7 @@ basic/output
 node_modules/
 output/
 out
+app/
+*.cabal
+*.iml
 
-basic/app/
-basic/haskell-purescript-hello-world.cabal
-basic/haskell-purescript-hello-world.iml
-logging/app/
-logging/haskell-purescript-hello-world-with-logging.cabal
-logging/haskell-purescript-hello-world-with-logging.iml

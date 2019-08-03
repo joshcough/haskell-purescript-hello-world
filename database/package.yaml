@@ -1,0 +1,136 @@
+name: haskell-purescript-hello-world-with-logging
+version: '0.1.0.0'
+author: Josh Cough
+maintainer: joshcough@gmail.com
+homepage:  https://github.com/joshcough/haskell-purescript-hello-world
+license: MIT
+category: Web
+copyright: © 2019 Josh Cough
+github: https://github.com/joshcough/haskell-purescript-hello-world
+extra-source-files:
+  - README.md
+
+ghc-options:
+  - -Wall
+  - -Werror
+  - -Wcompat
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wredundant-constraints
+  - -Wimplicit-prelude
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - ConstraintKinds
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DerivingStrategies
+  - DeriveTraversable
+  - EmptyCase
+  - ExistentialQuantification
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - InstanceSigs
+  - KindSignatures
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - OverloadedLabels
+  - OverloadedStrings
+  - PatternSynonyms
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeFamilyDependencies
+  - TypeOperators
+
+dependencies:
+  - base
+  - protolude
+
+library:
+  source-dirs: src
+  dependencies:
+    - aeson
+    - aeson-pretty
+    - async
+    - bcrypt
+    - binary
+    - bytestring
+    - conduit
+    - containers
+    - directory
+    - esqueleto
+    - exceptions
+    - fast-logger
+    - filepath
+    - foreign-store
+    - HTTP
+    - http-api-data
+    - irc-core
+    - jose
+    - lens
+    - lens-aeson
+    - MissingH
+    - monad-control
+    - monad-logger
+    - mtl
+    - nano-http >=0.1.1
+    - network
+    - persistent
+    - persistent-postgresql
+    - persistent-template
+    - postgresql-simple-url
+    - postgresql-simple
+    - purescript-bridge >= 0.13
+    - random
+    - resourcet
+    - resource-pool
+    - rollbar
+    - safe
+    - servant >= 0.13 && <= 0.14.1
+    - servant-auth >=0.3.1.0
+    - servant-auth-server
+    - servant-blaze
+    - servant-multipart
+    - servant-server >= 0.13 && <= 0.14.1
+    - servant-websockets
+    - stm
+    - string-conversions
+    - template-haskell
+    - text
+    - time
+    - transformers
+    - transformers-base
+    - trifecta
+    - unliftio-core
+    - unordered-containers
+    - uuid
+    - vector
+    - wai
+    - wai-cors
+    - warp
+    - zip
+
+executables:
+  haskell-purescript-hello-world-with-logging-server:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - haskell-purescript-hello-world-with-logging

@@ -4,7 +4,7 @@ import Prelude
 
 import Elmish (boot, nat)
 import Effect (Effect)
-import Dogs (def)
+import HelloWorld (def)
 import Types (runOpM)
 
 main :: Effect Unit
