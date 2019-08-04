@@ -1,24 +1,20 @@
 module Auth.UserAPI where
 
+import Auth.Models (CreateUser(..), Login(..), User(..))
+import qualified Auth.UserStorage as Db
 import Control.Monad.Except (MonadError, MonadIO, liftIO)
 import Control.Monad.Reader (MonadReader, asks)
 import Crypto.BCrypt (validatePassword)
-import Data.Aeson (Value, (.=))
-import Data.Text (Text)
+import Data.Aeson ((.=))
 import Data.Text.Encoding (encodeUtf8)
-import Database.Persist.Postgresql (fromSqlKey)
 import Protolude
-import Scaffolding.ServantHelpers
-import Servant.Auth.Server
-
-import Auth.DatabaseModels (DbUserId)
-import Auth.Models (CreateUser(..), Login(..), User(..))
-import qualified Auth.UserStorage as Db
 import Scaffolding.Logging (logDebug)
-import Scaffolding.Types (AppT, Config(..), HelloError(..))
+import Scaffolding.ServantHelpers
+import Scaffolding.Types (AppT, Config(..), HelloError)
+import Servant.Auth.Server
+import Scaffolding.Error (AppError(..))
 
 type SetCookieHeader = Header "Set-Cookie" SetCookie
-
 type SetCookieHeaders = '[ SetCookieHeader, SetCookieHeader]
 
 ---
@@ -26,14 +22,15 @@ type SetCookieHeaders = '[ SetCookieHeader, SetCookieHeader]
 ---
 type LoginAPI = "login" :> Compose LoginServer
 
-newtype LoginServer route =
+data LoginServer route =
   LoginServer
     { loginServerLogin :: route :- ReqBody '[JSON] Login :> Post '[JSON] (Headers SetCookieHeaders ())
+    , loginServerRegister :: route :- ReqBody '[JSON] CreateUser :> Post '[JSON] ()
     }
   deriving (Generic)
 
 loginServer :: MonadIO m => ServerT LoginAPI (AppT Config m)
-loginServer = toServant $ LoginServer login
+loginServer = toServant $ LoginServer login createUser
 
 {-
  - Here is the login handler. We do the following:
@@ -47,6 +44,15 @@ login (Login e pw) = do
   maybeOr401 maybeU $ \(user, hashedPw) -> guard401 (validate hashedPw) (applyCookies user)
   where
     validate hashedPw = validatePassword (encodeUtf8 hashedPw) (encodeUtf8 pw)
+
+createUser :: MonadIO m => CreateUser -> AppT Config m ()
+createUser c = Db.createUser c >>= \case
+  Nothing -> do
+    $(logDebug) "Something wen't wrong trying to encrypt the users password" ["user" .= c]
+    throwError (AppUnexpectedError "something wrong with password")
+  Just _ -> do
+    $(logDebug) "Successfully created user" ["user" .= c]
+    return ()
 
 -- |
 applyCookies :: (MonadError HelloError m, MonadIO m, MonadReader Config m) => User -> m (Headers SetCookieHeaders ())

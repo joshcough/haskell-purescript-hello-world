@@ -42,6 +42,7 @@ instance MonadIO m => UserDb (SqlPersistT m) where
   deleteUserById = P.deleteCascade
   createUser (CreateUser name email pw) =
     liftIO (encryptPassword pw) >>= \case
+      -- we couldn't encrypt there password, something went wrong.
       Nothing -> return Nothing
       Just password' -> do
         newUser <- insert $ DbUser name email (decodeUtf8 password')
