@@ -4,7 +4,7 @@ import Prelude
 
 import Elmish (boot, nat)
 import Effect (Effect)
-import Login (def)
+import Home (def)
 import Types (runOpM)
 
 {-
@@ -36,6 +36,8 @@ Questions:
    Can we get this from a cookie?
    Do we need to use local storage for anything, or just cookies?
 
+   answer: we should probably take it from the cookie, and put it in local storage.
+   when they logout, we should remove it from the cookie and from local storage
 -}
 
 main :: Effect Unit

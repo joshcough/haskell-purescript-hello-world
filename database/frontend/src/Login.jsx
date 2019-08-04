@@ -23,4 +23,8 @@ export const Login = props =>
       <Row>
         <Col md={3}><Button onClick={props.submit} block>Login</Button></Col>
       </Row>
+      <Row>
+        <Col md={3}>Need to Register?</Col>
+        <Col md={3}><Button onClick={props.register} block>Register</Button></Col>
+      </Row>
   </div>

@@ -1,6 +1,8 @@
 module Register
-    ( Message,
-      def
+    ( Message(..),
+      State,
+      def,
+      emptyState
     ) where
 
 import Prelude
@@ -10,8 +12,8 @@ import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Elmish (ComponentDef, DispatchMsg, JsCallback, JsCallback0, ReactComponent, Transition(..), createElement', handle, pureUpdate)
 import Network.HTTP (HttpException, Method(..), buildReq, httpJSON, jsonData)
+import Pages (Page, login)
 import Types (OpM)
-import Debug.Trace (spy)
 
 data Message =
     SetName String
@@ -20,6 +22,7 @@ data Message =
   | SetPassword2 String
   | Submit
   | GotResponse CreateUserResponse
+  | NavigateTo Page
 
 type State = {
     name :: String
@@ -35,7 +38,11 @@ foreign import view_ :: ReactComponent
   , setPassword1 :: JsCallback (String -> DispatchMsg)
   , setPassword2 :: JsCallback (String -> DispatchMsg)
   , submit :: JsCallback0
+  , login :: JsCallback0
   }
+
+emptyState :: State
+emptyState = { name : "", email : "", pw1 : "", pw2 : "", resp : Nothing }
 
 def :: ComponentDef OpM Message State
 def =
@@ -44,15 +51,14 @@ def =
   , view
   }
   where
-    emptyState = { name : "", email : "", pw1 : "", pw2 : "", resp : Nothing }
-
     update s = f where
       f (SetName n) = pureUpdate s { name = n }
       f (SetEmail e) = pureUpdate s { email = e }
       f (SetPassword1 p) = pureUpdate s { pw1 = p }
       f (SetPassword2 p) = pureUpdate s { pw2 = p }
       f Submit = s `Transition` [GotResponse <$> sendCreateReq s]
-      f (GotResponse r) = pureUpdate s { resp = Just (spy "response" r) }
+      f (GotResponse r) = s `Transition` [pure $ NavigateTo login]
+      f _ = pureUpdate s
 
     view s dispatch = createElement' view_ {
         setName: handle dispatch SetName
@@ -60,6 +66,7 @@ def =
       , setPassword1: handle dispatch SetPassword1
       , setPassword2: handle dispatch SetPassword2
       , submit: handle dispatch Submit
+      , login: handle dispatch (NavigateTo login)
       }
 
 localhost :: String

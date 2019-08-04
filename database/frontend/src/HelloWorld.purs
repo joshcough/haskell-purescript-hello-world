@@ -1,6 +1,8 @@
 module HelloWorld
-    ( Message,
-      def
+    ( Message(..),
+      State,
+      def,
+      emptyState
     ) where
 
 import Prelude
@@ -13,14 +15,18 @@ import Elmish.HTML as R
 import Elmish (ReactElement, ComponentDef, DispatchMsg, DispatchMsgFn, JsCallback, JsCallback0, ReactComponent, Transition(..), createElement', handle, pureUpdate)
 import Network.HTTP (HttpException, Method(..), buildReq, httpJSON, noData)
 import Types (OpM)
+import Pages (Page)
 
-data Message = SetCount String | GetMessage | GotMessage Models.Message
+data Message = SetCount String | GetMessage | GotMessage Models.Message | NavigateTo Page
 
 type State = { count :: Maybe Int, message :: Maybe Models.Message }
 
+emptyState :: State
+emptyState = { message: Nothing, count: Nothing }
+
 def :: ComponentDef OpM Message State
 def =
-  { init: { message: Nothing, count: Nothing } `Transition` []
+  { init: emptyState `Transition` []
   , update
   , view
   }
@@ -28,6 +34,7 @@ def =
     update s (SetCount t) = pureUpdate s { count = fromString t }
     update s GetMessage = s `Transition` [GotMessage <$> getMessage (fromMaybe 5 s.count)]
     update s (GotMessage m) = pureUpdate s { message = Just m }
+    update s _ = pureUpdate s
     view s dispatch = helloWorld s dispatch
 
 localhost :: String

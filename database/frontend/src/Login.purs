@@ -1,6 +1,8 @@
 module Login
-    ( Message,
-      def
+    ( Message(..),
+      State,
+      def,
+      emptyState
     ) where
 
 import Prelude
@@ -9,6 +11,7 @@ import Control.Monad.Error.Class (class MonadError)
 import Effect.Aff.Class (class MonadAff)
 import Elmish (ComponentDef, DispatchMsg, JsCallback, JsCallback0, ReactComponent, Transition(..), createElement', handle, pureUpdate)
 import Network.HTTP (HttpException, Method(..), buildReq, httpJSON, jsonData)
+import Pages (Page, hello, register)
 import Types (OpM)
 
 data Message =
@@ -16,6 +19,7 @@ data Message =
   | SetPassword String
   | Submit
   | GotResponse
+  | NavigateTo Page
 
 type State = {
     email :: String
@@ -26,7 +30,11 @@ foreign import view_ :: ReactComponent
   { setEmail :: JsCallback (String -> DispatchMsg)
   , setPassword :: JsCallback (String -> DispatchMsg)
   , submit :: JsCallback0
+  , register :: JsCallback0
   }
+
+emptyState :: State
+emptyState = { email : "", pw : "" }
 
 def :: ComponentDef OpM Message State
 def =
@@ -35,18 +43,18 @@ def =
   , view
   }
   where
-    emptyState = { email : "", pw : "" }
-
     update s = f where
       f (SetEmail e) = pureUpdate s { email = e }
       f (SetPassword p) = pureUpdate s { pw = p }
       f Submit = s `Transition` [pure GotResponse <* sendLoginReq s]
-      f GotResponse = pureUpdate s
+      f GotResponse = s `Transition` [pure $ NavigateTo hello]
+      f _ = pureUpdate s
 
     view s dispatch = createElement' view_ {
         setEmail: handle dispatch SetEmail
       , setPassword: handle dispatch SetPassword
       , submit: handle dispatch Submit
+      , register: handle dispatch (NavigateTo register)
       }
 
 localhost :: String

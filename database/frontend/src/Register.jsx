@@ -37,4 +37,9 @@ export const Register = props =>
       <Row>
         <Col md={3}><Button onClick={props.submit} block>Register</Button></Col>
       </Row>
+
+      <Row>
+        <Col md={3}>Already registered?</Col>
+        <Col md={3}><Button onClick={props.login} block>Login!</Button></Col>
+      </Row>
   </div>
