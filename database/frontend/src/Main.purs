@@ -4,7 +4,7 @@ import Prelude
 
 import Elmish (boot, nat)
 import Effect (Effect)
-import Register (def)
+import Login (def)
 import Types (runOpM)
 
 {-
