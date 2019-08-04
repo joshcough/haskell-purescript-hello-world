@@ -41,6 +41,10 @@ loginServer = toServant $ LoginServer login createUser
 login :: MonadIO m => Login -> AppT Config m (Headers SetCookieHeaders ())
 login (Login e pw) = do
   maybeU <- Db.getUserByEmail e
+  -- TODO: hash password anyway, because it will take an equal amount of time.
+  -- this makes it so hackers can't know why they got 401
+  -- if it returns fast, they know that the user doesn't exist
+  -- if it returns slow, the wont know if its that, or wrong password
   maybeOr401 maybeU $ \(user, hashedPw) -> guard401 (validate hashedPw) (applyCookies user)
   where
     validate hashedPw = validatePassword (encodeUtf8 hashedPw) (encodeUtf8 pw)

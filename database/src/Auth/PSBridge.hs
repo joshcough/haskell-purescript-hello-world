@@ -1,18 +1,18 @@
-
 module Auth.PSBridge where
 
 import Protolude
-import Data.Proxy
 import Language.PureScript.Bridge
-import Language.PureScript.Bridge.SumType (equal)
+import Language.PureScript.Bridge.SumType (order)
 import Auth.Models
 
 main :: IO ()
 main = writePSTypes "frontend/src" (buildBridge defaultBridge) myTypes
 
--- TODO: there are more types in Models that maybe should be added here
 myTypes :: [SumType 'Haskell]
 myTypes = [
-    let p = (Proxy :: Proxy User)                in equal p (mkSumType p)
-  , let p = (Proxy :: Proxy CreateUser)          in equal p (mkSumType p)
+    go (Proxy :: Proxy CreateUser)
+  , go (Proxy :: Proxy CreateUserResponse)
+  , go (Proxy :: Proxy Login)
+  , go (Proxy :: Proxy User)
   ]
+  where go p = order p (mkSumType p)
