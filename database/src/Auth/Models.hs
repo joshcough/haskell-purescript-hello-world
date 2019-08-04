@@ -16,26 +16,26 @@ import           GHC.Generics           (Generic)
 import           Servant.Auth.Server
 
 data Login = Login {
-    loginEmail    :: Text
-  , loginPassword :: Text
+    _loginEmail    :: Text
+  , _loginPassword :: Text
 } deriving stock (Eq, Ord, Show, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
 data User = User {
-    userId       :: Int64
-  , userName     :: Text
-  , userEmail    :: Text
+    _userId       :: Int64
+  , _userName     :: Text
+  , _userEmail    :: Text
 } deriving stock (Eq, Ord, Show, Generic)
   deriving anyclass (FromJSON, ToJSON, ToJWT, FromJWT)
 
 data CreateUser = CreateUser {
-    createUserName     :: Text
-  , createUserEmail    :: Text
-  , createUserPassword :: Text
+    _createUserName     :: Text
+  , _createUserEmail    :: Text
+  , _createUserPassword :: Text
 } deriving stock (Eq, Ord, Show, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
 newtype CreateUserResponse = CreateUserResponse {
-    createUserResponse :: Either Text ()
+    _createUserResponse :: Either Text ()
 } deriving stock (Eq, Ord, Show, Generic)
   deriving anyclass (FromJSON, ToJSON)

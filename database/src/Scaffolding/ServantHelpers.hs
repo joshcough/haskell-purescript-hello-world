@@ -50,10 +50,7 @@ unexpected = throwError . AppAppError . HelloMiscError
 
 -- |
 guard401 :: MonadError (AppError e) m => Bool -> m a -> m a
-guard401 b m =
-  if b
-    then m
-    else throwError $ AppNotFoundError ""
+guard401 b m = if b then m else throwError $ AppNotFoundError ""
 
 -- |
 maybeOr404 :: MonadError (AppError e) m => Maybe a -> (a -> m b) -> m b
@@ -73,7 +70,7 @@ maybeOrErr err = flip $ maybe (throwError err)
 
 -- |
 callerIsUserOr401 :: MonadError (AppError e) m => User -> DbUserId -> m a -> m a
-callerIsUserOr401 caller uid m = orNoAuth m $ userId caller == fromSqlKey uid
+callerIsUserOr401 caller uid m = orNoAuth m $ _userId caller == fromSqlKey uid
 
 -- |
 orNoAuth :: MonadError (AppError e) m => m a -> Bool -> m a

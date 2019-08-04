@@ -1,0 +1,2 @@
+export DATABASE_URL="postgresql://hellotest@localhost:5432/hellotest"
+stack ghci

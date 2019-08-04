@@ -21,9 +21,9 @@ import Data.Argonaut.Generic (genericDecodeJson, genericEncodeJson)
 
 newtype CreateUser
   = CreateUser
-      { createUserName :: String
-      , createUserEmail :: String
-      , createUserPassword :: String
+      { _createUserName :: String
+      , _createUserEmail :: String
+      , _createUserPassword :: String
       }
 
 
@@ -38,14 +38,23 @@ instance encodeCreateUser :: EncodeJson CreateUser where
     encodeJson = genericEncodeJson
 
 --------------------------------------------------------------------------------
-_CreateUser :: Iso' CreateUser { createUserName :: String
-                               , createUserEmail :: String
-                               , createUserPassword :: String }
+_CreateUser :: Iso' CreateUser { _createUserName :: String
+                               , _createUserEmail :: String
+                               , _createUserPassword :: String }
 _CreateUser = _Newtype
+
+createUserName :: Lens' CreateUser String
+createUserName = _Newtype <<< prop (SProxy :: SProxy "_createUserName")
+
+createUserEmail :: Lens' CreateUser String
+createUserEmail = _Newtype <<< prop (SProxy :: SProxy "_createUserEmail")
+
+createUserPassword :: Lens' CreateUser String
+createUserPassword = _Newtype <<< prop (SProxy :: SProxy "_createUserPassword")
 --------------------------------------------------------------------------------
 newtype CreateUserResponse
   = CreateUserResponse
-      { createUserResponse :: Either String Unit
+      { _createUserResponse :: Either String Unit
       }
 
 
@@ -61,13 +70,16 @@ instance encodeCreateUserResponse :: EncodeJson CreateUserResponse where
 
 
 --------------------------------------------------------------------------------
-_CreateUserResponse :: Iso' CreateUserResponse { createUserResponse :: Either String Unit }
+_CreateUserResponse :: Iso' CreateUserResponse { _createUserResponse :: Either String Unit }
 _CreateUserResponse = _Newtype
+
+createUserResponse :: Lens' CreateUserResponse (Either String Unit)
+createUserResponse = _Newtype <<< prop (SProxy :: SProxy "_createUserResponse")
 --------------------------------------------------------------------------------
 newtype Login
   = Login
-      { loginEmail :: String
-      , loginPassword :: String
+      { _loginEmail :: String
+      , _loginPassword :: String
       }
 
 
@@ -83,14 +95,20 @@ instance encodeLogin :: EncodeJson Login where
     encodeJson = genericEncodeJson
 
 --------------------------------------------------------------------------------
-_Login :: Iso' Login { loginEmail :: String, loginPassword :: String }
+_Login :: Iso' Login { _loginEmail :: String, _loginPassword :: String }
 _Login = _Newtype
+
+loginEmail :: Lens' Login String
+loginEmail = _Newtype <<< prop (SProxy :: SProxy "_loginEmail")
+
+loginPassword :: Lens' Login String
+loginPassword = _Newtype <<< prop (SProxy :: SProxy "_loginPassword")
 --------------------------------------------------------------------------------
 newtype User
   = User
-      { userId :: Int64
-      , userName :: String
-      , userEmail :: String
+      { _userId :: Int64
+      , _userName :: String
+      , _userEmail :: String
       }
 
 
@@ -106,6 +124,17 @@ instance encodeUser :: EncodeJson User where
 
 
 --------------------------------------------------------------------------------
-_User :: Iso' User { userId :: Int64, userName :: String, userEmail :: String }
+_User :: Iso' User { _userId :: Int64
+                   , _userName :: String
+                   , _userEmail :: String }
 _User = _Newtype
+
+userId :: Lens' User Int64
+userId = _Newtype <<< prop (SProxy :: SProxy "_userId")
+
+userName :: Lens' User String
+userName = _Newtype <<< prop (SProxy :: SProxy "_userName")
+
+userEmail :: Lens' User String
+userEmail = _Newtype <<< prop (SProxy :: SProxy "_userEmail")
 --------------------------------------------------------------------------------

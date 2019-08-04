@@ -1,0 +1,14 @@
+Description: Initial schema
+Created: 2019-08-04 10:50:00.000000 UTC
+Depends: 
+Apply: |
+    CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        name character varying NOT NULL,
+        email character varying NOT NULL,
+        hashed_password character varying NOT NULL,
+        Unique (email)
+    );
+
+Revert: |
+    DROP TABLE IF EXISTS users;

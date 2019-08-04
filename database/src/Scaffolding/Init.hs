@@ -1,4 +1,4 @@
-module Scaffolding.Init where
+module Scaffolding.Init (runApp) where
 
 import Protolude
 

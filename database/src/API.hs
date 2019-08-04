@@ -3,7 +3,7 @@ module API
   ) where
 
 import Auth.Models (User(..))
-import Auth.UserAPI (LoginAPI, loginServer)
+import Auth.UserAPI (UserAPI, userServer)
 import Control.Monad.Except (MonadIO, liftIO, throwError)
 import Data.Aeson ((.=))
 import Models (Message(..))
@@ -43,7 +43,7 @@ helloWorldServer :: (MonadIO m) => User -> ServerT HelloWorldAPI (AppT Config m)
 helloWorldServer u = toServant $ Api {..}
   where
     hello = do
-      let m = Message ("Hello, World" <> userName u)
+      let m = Message ("Hello, World" <> _userName u)
       $(logDebug) "in hello function" ["message" .= tShow m]
       pure m
 
@@ -51,14 +51,14 @@ type Unprotected = Compose UnprotectedServer
 
 -- | Not protected by any authorization. Anyone can visit these pages.
 newtype UnprotectedServer route = UnprotectedServer {
-    unprotectedServerLoginApi :: route :- LoginAPI
+    unprotectedServerLoginApi :: route :- UserAPI
   } deriving Generic
 
 -- |
 unprotectedServer :: (MonadIO m) => ServerT Unprotected (AppT Config m)
 unprotectedServer = toServant $ UnprotectedServer {..}
     where
-    unprotectedServerLoginApi = loginServer
+    unprotectedServerLoginApi = userServer
 
 -- | The main application for the Proverlays backend.
 app :: Config -> Application

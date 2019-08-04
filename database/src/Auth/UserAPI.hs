@@ -20,17 +20,17 @@ type SetCookieHeaders = '[ SetCookieHeader, SetCookieHeader]
 ---
 --- Login API/Server
 ---
-type LoginAPI = "login" :> Compose LoginServer
+type UserAPI = "users" :> Compose UserServer
 
-data LoginServer route =
-  LoginServer
-    { loginServerLogin :: route :- ReqBody '[JSON] Login :> Post '[JSON] (Headers SetCookieHeaders ())
-    , loginServerRegister :: route :- ReqBody '[JSON] CreateUser :> Post '[JSON] ()
+data UserServer route =
+  UserServer
+    { loginServerLogin :: route :- "login" :> ReqBody '[JSON] Login :> Post '[JSON] (Headers SetCookieHeaders ())
+    , loginServerRegister :: route :- "register" :> ReqBody '[JSON] CreateUser :> Post '[JSON] ()
     }
   deriving (Generic)
 
-loginServer :: MonadIO m => ServerT LoginAPI (AppT Config m)
-loginServer = toServant $ LoginServer login createUser
+userServer :: MonadIO m => ServerT UserAPI (AppT Config m)
+userServer = toServant $ UserServer login createUser
 
 {-
  - Here is the login handler. We do the following:

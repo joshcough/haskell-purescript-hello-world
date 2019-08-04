@@ -1,5 +1,5 @@
 { name =
-    "purescript-elmish-examples-html-hello-world: PureScript Elmish HTML Hello World"
+    "Basic login framework hopefully."
 , dependencies =
     [ "elmish"
     , "elmish-html"
@@ -11,6 +11,7 @@
     , "http-methods"
     , "affjax"
     , "react-basic"
+    , "either"
     ]
 , packages =
     ./packages.dhall
