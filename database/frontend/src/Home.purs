@@ -1,77 +1,55 @@
-module Home
-    ( Message,
-      def
-    ) where
+module Home ( Message, def ) where
 
 import Prelude
-import Control.Monad.Error.Class (class MonadError)
-import Effect.Aff.Class (class MonadAff)
-import Elmish ((<$$>), ReactElement, ComponentDef, DispatchMsg, JsCallback, JsCallback0, ReactComponent, Transition(..), createElement', handle, pureUpdate)
-import Network.HTTP (HttpException, Method(..), buildReq, httpJSON, jsonData)
-import Pages (Page(..), PublicPage(..), AuthedPage(..), hello)
-import Pages as Pages
-import Types (OpM)
-import Data.Maybe (Maybe(..))
+import Elmish (ComponentDef, ReactComponent, ReactElement, Transition(..), createElement', pureUpdate)
 import Data.Functor.Contravariant ((>#<))
+import Types (OpM, passToChild)
 
-import Login as Login
-import Register as Register
-import HelloWorld as HelloWorld
+import Pages (Page(..), PublicPage(..), AuthedPage(..))
+import Pages as Pages
+import Login as L
+import Register as R
+import HelloWorld as H
 
-data Message =
-    LoginMessage Login.Message
-  | RegisterMessage Register.Message
-  | HelloWorldMessage HelloWorld.Message
+data Message = LoginMessage L.Message | RegisterMessage R.Message | HelloWorldMessage H.Message
 
-type State = {
-    loginState :: Login.State
-  , registerState :: Register.State
-  , helloState :: HelloWorld.State
-  , page :: Page
-  }
+type State = { login :: L.State, register :: R.State, hello :: H.State, page :: Page }
 
 emptyState :: State
 emptyState = {
-      loginState : Login.emptyState
-    , registerState : Register.emptyState
-    , helloState : HelloWorld.emptyState
-    , page: Pages.login }
-
-
-foreign import view_ :: ReactComponent
-  { view :: ReactElement
+    login : L.emptyState
+  , register : R.emptyState
+  , hello : H.emptyState
+  , page: Pages.login
   }
+
+foreign import view_ :: ReactComponent { view :: ReactElement }
 
 def :: ComponentDef OpM Message State
-def =
-  { init: emptyState `Transition` []
-  , update
-  , view
-  }
+def = { init: emptyState `Transition` [], update, view }
   where
     update s = f where
-      f (LoginMessage (Login.NavigateTo p)) = pureUpdate $ navigateTo s p
-      f (LoginMessage m) = Transition s {loginState = s'} (LoginMessage <$$> fx)
-        where Transition s' fx = Login.def.update s.loginState m
+      f (LoginMessage (L.NavigateTo p)) = navigateTo p
+      f (LoginMessage m) = passToLogin s m
+      f (RegisterMessage (R.NavigateTo p)) = navigateTo p
+      f (RegisterMessage m) = passToRegister s m
+      f (HelloWorldMessage (H.NavigateTo p)) = navigateTo p
+      f (HelloWorldMessage m) = passToHello s m
 
-      f (RegisterMessage (Register.NavigateTo p)) = pureUpdate $ navigateTo s p
-      f (RegisterMessage m) = Transition s {registerState = s'} (RegisterMessage <$$> fx)
-        where Transition s' fx = Register.def.update s.registerState m
+      passToLogin    = passToChild L.def.update _.login    _ { login    = _ } LoginMessage
+      passToRegister = passToChild R.def.update _.register _ { register = _ } RegisterMessage
+      passToHello    = passToChild H.def.update _.hello    _ { hello    = _ } HelloWorldMessage
 
-      f (HelloWorldMessage (HelloWorld.NavigateTo p)) = pureUpdate $ navigateTo s p
-      f (HelloWorldMessage m) = Transition s {helloState = s'} (HelloWorldMessage <$$> fx)
-        where Transition s' fx = HelloWorld.def.update s.helloState m
-
-      navigateTo :: State -> Page -> State
-      navigateTo s p@(Public Login) = emptyState { page = p }
-      navigateTo s p@(Public Register) = emptyState { page = p }
+      navigateTo p@(Public Login)    = pureUpdate $ emptyState { page = p }
+      navigateTo p@(Public Register) = pureUpdate $ emptyState { page = p }
       -- todo: here we have to make sure the user is logged in!
-      navigateTo s p@(Authed Hello) = emptyState { page = p }
+      navigateTo p@(Authed p') = pureUpdate $ emptyState { page = p }
+
+      navigateToAuthed p =
 
     view s dispatch = createElement' view_ {
       view: case s.page of
-        Public Login -> Login.def.view s.loginState $ dispatch >#< LoginMessage
-        Public Register -> Register.def.view s.registerState $ dispatch >#< RegisterMessage
-        Authed Hello -> HelloWorld.def.view s.helloState $ dispatch >#< HelloWorldMessage
+        Public Login    -> L.def.view s.login    $ dispatch >#< LoginMessage
+        Public Register -> R.def.view s.register $ dispatch >#< RegisterMessage
+        Authed Hello    -> H.def.view s.hello    $ dispatch >#< HelloWorldMessage
       }
-
